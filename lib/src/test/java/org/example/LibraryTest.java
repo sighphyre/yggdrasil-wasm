@@ -4,7 +4,6 @@
 package org.example;
 
 import org.junit.Test;
-import static org.junit.Assert.*;
 
 public class LibraryTest {
     @Test
@@ -19,5 +18,15 @@ public class LibraryTest {
         String path = "/home/simon/dev/yggdrasil/test-data/simple.json";
         String json = new String(java.nio.file.Files.readAllBytes(java.nio.file.Paths.get(path)));
         engine.takeState(json);
+    }
+
+    @Test
+    public void isEnabledReturnsCorrectResult() throws Exception {
+        var engine = new UnleashEngine();
+
+        String path = "/home/simon/dev/yggdrasil/test-data/simple.json";
+        String json = new String(java.nio.file.Files.readAllBytes(java.nio.file.Paths.get(path)));
+        engine.takeState(json);
+        engine.checkEnabled("Feature.A", new Context());
     }
 }

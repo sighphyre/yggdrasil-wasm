@@ -7,6 +7,9 @@ import com.dylibso.chicory.runtime.HostFunction;
 import com.dylibso.chicory.runtime.Instance;
 import com.dylibso.chicory.runtime.Memory;
 import com.dylibso.chicory.wasm.types.ValueType;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.File;
 import java.security.SecureRandom;
@@ -18,6 +21,17 @@ public class UnleashEngine {
     private long enginePointer;
     private ExportFunction alloc;
     private ExportFunction dealloc;
+    private Memory memory;
+
+    private static final ObjectMapper objectMapper = new ObjectMapper();
+
+    public static String toJson(Object obj) {
+        try {
+            return objectMapper.writeValueAsString(obj);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to serialize to JSON", e);
+        }
+    }
 
     public UnleashEngine() {
         var store = new Store();
@@ -52,30 +66,46 @@ public class UnleashEngine {
         ExportFunction newEngine = wasmModule.export("new_engine");
         this.alloc = wasmModule.export("alloc");
         this.dealloc = wasmModule.export("dealloc");
+        this.memory = wasmModule.memory();
 
         this.enginePointer = newEngine.apply()[0];
     }
 
     public void takeState(String message) {
 
-        Memory memory = wasmModule.memory();
         int len = message.getBytes().length;
 
         int ptr = (int) alloc.apply(len)[0];
-        // We can now write the message to the module's memory:
         memory.writeString(ptr, message);
 
         ExportFunction takeState = wasmModule.export("take_state");
-        ExportFunction getReturnLen = wasmModule.export("get_return_len");
 
         int resultPtr = (int)takeState.apply(this.enginePointer, ptr, len)[0];
-        int resultLen = (int) getReturnLen.apply()[0];
 
+        String result = memory.readCString(resultPtr);
+
+        System.out.println(result);
         dealloc.apply(ptr, len);
+    }
 
-        String result = memory.readString(resultPtr, resultLen);
-        System.out.println("WASM returned: " + result);
+    public boolean checkEnabled(String toggleName, Context context) throws JsonMappingException, JsonProcessingException {
+        int toggleNameLen = toggleName.getBytes().length;
+        int toggleNamePtr = (int) alloc.apply(toggleNameLen)[0];
+        memory.writeString(toggleNamePtr, toggleName);
 
-        dealloc.apply(resultPtr, resultLen);
+        ExportFunction checkEnabled = wasmModule.export("check_enabled");
+        String contextString = toJson(context);
+
+        int contextLen = contextString.getBytes().length;
+        int contextPtr = (int) alloc.apply(contextLen)[0];
+        memory.writeString(contextPtr, contextString);
+
+        int resultPtr = (int)checkEnabled.apply(this.enginePointer, toggleNamePtr, toggleNameLen, contextPtr, contextLen)[0];
+
+        String result = memory.readCString(resultPtr);
+        WasmResponse<Boolean> response = objectMapper.readValue(result, WasmResponse.class);
+
+        dealloc.apply(toggleNamePtr, toggleNameLen);
+        return response.value;
     }
 }
