@@ -8,12 +8,12 @@ import org.junit.Test;
 public class LibraryTest {
     @Test
     public void engineCanBeNewedUpWithoutError() throws Exception {
-        new UnleashEngine();
+        new WasmEngine();
     }
 
     @Test
     public void takeStateLoadsJsonCorrectly() throws Exception {
-        var engine = new UnleashEngine();
+        var engine = new WasmEngine();
 
         String path = "/home/simon/dev/yggdrasil/test-data/simple.json";
         String json = new String(java.nio.file.Files.readAllBytes(java.nio.file.Paths.get(path)));
@@ -22,11 +22,11 @@ public class LibraryTest {
 
     @Test
     public void isEnabledReturnsCorrectResult() throws Exception {
-        var engine = new UnleashEngine();
+        var engine = new WasmEngine();
 
         String path = "/home/simon/dev/yggdrasil/test-data/simple.json";
         String json = new String(java.nio.file.Files.readAllBytes(java.nio.file.Paths.get(path)));
         engine.takeState(json);
-        engine.checkEnabled("Feature.A", new Context());
+        engine.checkEnabled("Feature.A", new WasmContext());
     }
 }

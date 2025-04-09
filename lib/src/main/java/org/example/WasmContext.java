@@ -2,7 +2,7 @@ package org.example;
 
 import java.util.Map;
 
-public class Context {
+public class WasmContext {
     public String userId;
     public String sessionId;
     public String appName;

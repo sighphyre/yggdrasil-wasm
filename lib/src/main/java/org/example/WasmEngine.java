@@ -15,7 +15,7 @@ import java.io.File;
 import java.security.SecureRandom;
 import java.util.List;
 
-public class UnleashEngine {
+public class WasmEngine {
 
     private Instance wasmModule;
     private long enginePointer;
@@ -33,7 +33,7 @@ public class UnleashEngine {
         }
     }
 
-    public UnleashEngine() {
+    public WasmEngine() {
         var store = new Store();
 
         // this is better expressed as a host module but that requires some fiddling to
@@ -88,7 +88,7 @@ public class UnleashEngine {
         dealloc.apply(ptr, len);
     }
 
-    public boolean checkEnabled(String toggleName, Context context) throws JsonMappingException, JsonProcessingException {
+    public boolean checkEnabled(String toggleName, WasmContext context) throws JsonMappingException, JsonProcessingException {
         int toggleNameLen = toggleName.getBytes().length;
         int toggleNamePtr = (int) alloc.apply(toggleNameLen)[0];
         memory.writeString(toggleNamePtr, toggleName);
@@ -103,9 +103,10 @@ public class UnleashEngine {
         int resultPtr = (int)checkEnabled.apply(this.enginePointer, toggleNamePtr, toggleNameLen, contextPtr, contextLen)[0];
 
         String result = memory.readCString(resultPtr);
-        WasmResponse<Boolean> response = objectMapper.readValue(result, WasmResponse.class);
+        // WasmResponse<Boolean> response = objectMapper.readValue(result, WasmResponse.class);
 
         dealloc.apply(toggleNamePtr, toggleNameLen);
-        return response.value;
+        // return response.value;
+        return false;
     }
 }
