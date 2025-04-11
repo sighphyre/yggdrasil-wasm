@@ -16,7 +16,7 @@ wasm2class {
     modules {
         // Customize this to match your actual wasm file
         create("Yggdrasil") {
-            wasm = file("/home/simon/dev/yggdrasil/target/wasm32-unknown-unknown/release/pure_wasm.wasm")
+            wasm = file("../../../yggdrasil/target/wasm32-unknown-unknown/release/pure_wasm.wasm")
             targetPackage = "org.example.wasm"
         }
     }

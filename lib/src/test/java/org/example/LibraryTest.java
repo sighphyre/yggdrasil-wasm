@@ -15,7 +15,7 @@ public class LibraryTest {
     public void takeStateLoadsJsonCorrectly() throws Exception {
         var engine = new WasmEngine();
 
-        String path = "/home/simon/dev/yggdrasil/test-data/simple.json";
+        String path = "../../../yggdrasil/test-data/simple.json";
         String json = new String(java.nio.file.Files.readAllBytes(java.nio.file.Paths.get(path)));
         engine.takeState(json);
     }

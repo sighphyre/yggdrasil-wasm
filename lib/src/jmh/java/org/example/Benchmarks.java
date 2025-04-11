@@ -45,7 +45,7 @@ public class Benchmarks {
         context.userId = "7";
         context.properties = new HashMap<String, String>();
 
-        String path = "/home/simon/dev/yggdrasil/test-data/delta_base.json";
+        String path = "../../../yggdrasil/test-data/delta_base.json";
         String json = loadBootstrap(path);
 
         UnleashConfig config = UnleashConfig.builder()
