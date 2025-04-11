@@ -9,6 +9,21 @@ plugins {
     // Apply the java-library plugin for API and implementation separation.
     id 'java-library'
     id 'me.champeau.jmh' version '0.7.2'
+    id 'at.released.wasm2class.plugin' version '0.3'
+}
+
+wasm2class {
+    modules {
+        // Customize this to match your actual wasm file
+        create("Yggdrasil") {
+            wasm = file("/home/simon/dev/yggdrasil/target/wasm32-unknown-unknown/release/pure_wasm.wasm")
+            targetPackage = "org.example.wasm"
+        }
+    }
+}
+
+sourceSets["main"].java {
+    srcDir("build/generated-sources/chicory-aot")
 }
 
 repositories {
@@ -37,6 +52,8 @@ dependencies {
     implementation("io.getunleash:yggdrasil-engine:0.1.2")
 
     implementation("io.getunleash:unleash-client-java:9.3.2")
+
+    implementation("com.google.flatbuffers:flatbuffers-java:23.1.21")
 }
 
 // Apply a specific Java toolchain to ease working on different environments.

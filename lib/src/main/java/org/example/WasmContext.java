@@ -10,4 +10,8 @@ public class WasmContext {
     public String environment;
     public String remoteAddress;
     public Map<String, String> properties;
+
+    public Map<String, String> getProperties() {
+        return properties;
+    }
 }

@@ -27,6 +27,10 @@ public class LibraryTest {
         String path = "/home/simon/dev/yggdrasil/test-data/simple.json";
         String json = new String(java.nio.file.Files.readAllBytes(java.nio.file.Paths.get(path)));
         engine.takeState(json);
-        engine.checkEnabled("Feature.A", new WasmContext());
+        boolean result = engine.checkEnabled("Feature.A", new WasmContext());
+        result = engine.checkEnabled("Feature.A", new WasmContext());
+        result = engine.checkEnabled("Feature.A", new WasmContext());
+        result = engine.checkEnabled("Feature.A", new WasmContext());
+        assert(result);
     }
 }

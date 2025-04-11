@@ -10,6 +10,7 @@ import io.getunleash.engine.Context;
 import io.getunleash.UnleashContext;
 import io.getunleash.util.UnleashConfig;
 
+import java.util.HashMap;
 import java.util.concurrent.TimeUnit;
 
 @BenchmarkMode(Mode.AverageTime)
@@ -30,7 +31,7 @@ public class Benchmarks {
     private Unleash pureClient;
     private UnleashContext pureContext;
 
-    private static final String FEATURE_NAME = "Feature.A";
+    private static final String FEATURE_NAME = "test-flag";
 
     @Setup(Level.Trial)
     public void setup() throws Exception {
@@ -42,14 +43,15 @@ public class Benchmarks {
         ffiContext = new Context();
 
         context.userId = "7";
+        context.properties = new HashMap<String, String>();
 
-        String path = "/home/simon/dev/yggdrasil/test-data/simple.json";
+        String path = "/home/simon/dev/yggdrasil/test-data/delta_base.json";
         String json = loadBootstrap(path);
 
         UnleashConfig config = UnleashConfig.builder()
                 .appName("my.java-app")
                 .unleashAPI("http://localhost:4242/api/")
-                .apiKey("whatever")
+                .apiKey("does-not-matter")
                 .toggleBootstrapProvider(new ToggleBootstrapProvider() {
                     @Override
                     public String read() {
@@ -59,6 +61,7 @@ public class Benchmarks {
                 .build();
 
         pureClient = new DefaultUnleash(config);
+
 
         pureContext = UnleashContext.builder()
                 .userId("user@mail.com").build();
